@@ -18,29 +18,27 @@ import java.io.PrintWriter;
  *
  */
 public class DirectedGraph {
-	
+
 	private static final String NEWLINE = System.getProperty("line.separator");
-	private ArrayList<Node> nodes = new ArrayList<Node>();//nodes list
+	private ArrayList<Node> nodes = new ArrayList<Node>();// nodes list
 	private Map<String, Node> lookup = new HashMap<String, Node>();
 	private boolean iscycle = false;
-	
-	public ArrayList<Node> getNodes(){
-		return this.nodes;
-	}
+
 	/**
-	 *Shortest Path- Dijkstra's Algorithm implementation
+	 * Shortest Path- Dijkstra's Algorithm implementation
 	 * 
 	 * @param startLabel
 	 * @param destLabel
 	 * @return an arrayList of nodes on the shortest path
 	 */
-	public synchronized ArrayList<Node> shortestPath(String startLabel, String destLabel) {
+	public synchronized ArrayList<Node> shortestPath(String startLabel,
+			String destLabel) {
 		reset();
 		Node start = lookup.get(startLabel);
 		Node dest = lookup.get(destLabel);
 		ArrayList<Node> tempNodes = new ArrayList<Node>();
 		ArrayList<Node> visited = new ArrayList<Node>();
-		
+
 		for (int i = 0; i < nodes.size(); i++) {
 			tempNodes.add(nodes.get(i));
 			if (tempNodes.get(i) == start) {
@@ -55,47 +53,54 @@ public class DirectedGraph {
 			start.visit();
 
 			start = getMinDest(visited);
-			
+
 		}
-		//print result to console
+		// print result to console
 		System.out.println("Village\tCost\tVisited\tPath\tPathes list");
-		for(Node n:tempNodes){
-			if(n.isVisited()){
-				updatePath(start,n,n.getPaths());
-				//the paths figured out in the recursive updatePath() method are in a reverse order
+		for (Node n : tempNodes) {
+			if (n.isVisited()) {
+				updatePath(start, n, n.getPaths());
+				// the paths figured out in the recursive updatePath() method
+				// are in a reverse order
 				Collections.reverse(n.getPaths());
-				//add the node itself for GUI's convenience 
+				// add the node itself for GUI's convenience
 				n.getPaths().add(n);
 			}
 		}
 		for (int i = 0; i < tempNodes.size(); i++) {
 			System.out.println(nodes.get(i).getLabel() + "\t"
 					+ nodes.get(i).getMinDist() + "\t"
-					+ nodes.get(i).isVisited()+"\t"+nodes.get(i).getPath()+"\t"+nodes.get(i).getPaths().toString());
+					+ nodes.get(i).isVisited() + "\t" + nodes.get(i).getPath()
+					+ "\t" + nodes.get(i).getPaths().toString());
 		}
 		ArrayList<Node> paths = new ArrayList<Node>();
-		for(Node n:tempNodes){
-			if(n==dest){
-				paths= n.getPaths();
+		for (Node n : tempNodes) {
+			if (n == dest) {
+				paths = n.getPaths();
 			}
 		}
 		return paths;
 	}
+
 	/**
-	 * Recursive function to find all the nodes on the shortest path for GUI Display
+	 * Recursive function to find all the nodes on the shortest path for GUI
+	 * Display
+	 * 
 	 * @param start
 	 * @param target
 	 * @param paths
 	 */
-	private void updatePath(Node start, Node target, ArrayList<Node> paths){
-		if(target==start) return;
-		for(Node n:nodes){
-			if(n==target.getPath()){
+	private void updatePath(Node start, Node target, ArrayList<Node> paths) {
+		if (target == start)
+			return;
+		for (Node n : nodes) {
+			if (n == target.getPath()) {
 				paths.add(n);
-				updatePath(start,n,paths);
+				updatePath(start, n, paths);
 			}
 		}
 	}
+
 	/**
 	 * Assistance method in Dijkstra's algorithm
 	 * 
@@ -138,9 +143,10 @@ public class DirectedGraph {
 		while (!nodes.isEmpty()) {
 			Node tempNode = findNode();
 			if (tempNode == null) {
-				System.out.println("Error: Found a cycle.Topological sort is interrupted.");
+				System.out
+						.println("Error: Found a cycle.Topological sort is interrupted.");
 				nodes = temp;
-				this.iscycle=true;
+				this.iscycle = true;
 				updateIndegree();
 				return;
 			}
@@ -150,9 +156,10 @@ public class DirectedGraph {
 		nodes = sorted;
 		updateIndegree();
 	}
-	
+
 	/**
 	 * find the node with indegree of 0-help in topological sort
+	 * 
 	 * @return
 	 */
 	private Node findNode() {
@@ -163,6 +170,25 @@ public class DirectedGraph {
 		return null;
 	}
 
+	/**
+	 * getter method
+	 * 
+	 * @return
+	 */
+	public ArrayList<Node> getNodes() {
+		return this.nodes;
+	}
+
+	public void setNodes(ArrayList<Node> list) {
+		this.nodes = list;
+	}
+
+	/**
+	 * add a node to graph
+	 * 
+	 * @param label
+	 * @return
+	 */
 	public Node addNode(String label) {
 		if (lookup.containsKey(label))
 			return lookup.get(label);
@@ -175,6 +201,14 @@ public class DirectedGraph {
 		return newNode;
 	}
 
+	/**
+	 * Add edge and error checking
+	 * 
+	 * @param srcLabel
+	 * @param destLabel
+	 * @param cost
+	 * @return
+	 */
 	public Edge addEdge(String srcLabel, String destLabel, int cost) {
 		Node srcNode = addNode(srcLabel);
 		Node destNode = addNode(destLabel);
@@ -186,33 +220,35 @@ public class DirectedGraph {
 		destNode.setIndegree(destNode.getIndegree() + 1);
 		return newEdge;
 	}
-	
+
 	/**
 	 * simply remove the node from list
+	 * 
 	 * @param n
 	 */
-	public void remove(Node n){
+	public void remove(Node n) {
 		this.nodes.remove(n);
 	}
+
 	/**
 	 * deletion of individual villages. After the deletion:
 	 * 
-	 * (1)any roads that went through the village's route to other villages are direct
-	 * (2)Roads cost are summed up
+	 * (1)any roads that went through the village's route to other villages are
+	 * direct (2)Roads cost are summed up
 	 * 
 	 * @param label
 	 * @return
 	 */
 	public Node removeNode(String label) {
 		Node temp = lookup.get(label);
-		
+
 		if (temp.getEdges().isEmpty()) {
 			// remove all the edges to temp
 			for (Node n : nodes) {
 				n.removeEdge(temp);
 			}
 		} else {
-			//Create temporary list for backup
+			// Create temporary list for backup
 			ArrayList<Node> tempDests = new ArrayList<Node>();
 			ArrayList<Integer> tempCosts = new ArrayList<Integer>();
 			for (Edge e : temp.getEdges()) {
@@ -223,7 +259,7 @@ public class DirectedGraph {
 				if (n.contains(temp)) {
 					int tempcost = n.removeEdge(temp).getCost();
 					for (int i = 0; i < tempDests.size(); i++) {
-						//add the integrated road with updated(sum) cost
+						// add the integrated road with updated(sum) cost
 						addEdge(n.getLabel(), tempDests.get(i).getLabel(),
 								tempCosts.get(i) + tempcost);
 					}
@@ -231,17 +267,19 @@ public class DirectedGraph {
 			}
 		}
 		nodes.remove(temp);
-		//update the indegree
+		// update the indegree
 		updateIndegree();
 		System.out.println("Removed node " + temp.getLabel() + ".");
 		return temp;
 
 	}
+
 	/**
-	 * update the indegree of node on the graph after some calculations performed in tpsort method
+	 * update the indegree of node on the graph after some calculations
+	 * performed in tpsort method
 	 */
 	private void updateIndegree() {
-		
+
 		for (Node n : nodes) {
 			n.setIndegree(0);
 		}
@@ -253,12 +291,14 @@ public class DirectedGraph {
 			}
 		}
 	}
-	public void reset(){
-		this.iscycle=false;
-		for(Node n:nodes){
+
+	public void reset() {
+		this.iscycle = false;
+		for (Node n : nodes) {
 			n.reset();
 		}
 	}
+
 	public String toString() {
 		StringBuilder str = new StringBuilder();
 
@@ -289,37 +329,40 @@ public class DirectedGraph {
 		}
 
 		out.close();
-	}	
-	
+	}
+
 	public boolean isIscycle() {
 		return iscycle;
 	}
+
 	public void setIscycle(boolean iscycle) {
 		this.iscycle = iscycle;
 	}
+
 	/**
 	 * test client code for directed graph
+	 * 
 	 * @param args
 	 */
-	public static void main(String[] args){
-		   DirectedGraph g = new DirectedGraph();
-		   
-	 		try (BufferedReader br = new BufferedReader(new FileReader("graph"))) {
+	public static void main(String[] args) {
+		DirectedGraph g = new DirectedGraph();
 
-	 			String sCurrentLine;
+		try (BufferedReader br = new BufferedReader(new FileReader("graph"))) {
 
-	 			while ((sCurrentLine = br.readLine()) != null) {
-	 				String[] str = sCurrentLine.split(" ");
-	 				g.addEdge(str[0], str[1], Integer.parseInt(str[2]));
-	 			}
+			String sCurrentLine;
 
-	 		} catch (IOException e) {
-	 			System.out.println("No such file.");
-	 			return;
-	 		}
-	 		g.tpSortBFS();
-	 		System.out.println(g);
-	 		g.shortestPath("1", "8");
-	 		
+			while ((sCurrentLine = br.readLine()) != null) {
+				String[] str = sCurrentLine.split(" ");
+				g.addEdge(str[0], str[1], Integer.parseInt(str[2]));
+			}
+
+		} catch (IOException e) {
+			System.out.println("No such file.");
+			return;
 		}
+		g.tpSortBFS();
+		System.out.println(g);
+		g.shortestPath("1", "8");
+
+	}
 }

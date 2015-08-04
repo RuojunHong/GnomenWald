@@ -1,5 +1,4 @@
 
-
 import java.util.ArrayList;
 
 /**
@@ -8,96 +7,111 @@ import java.util.ArrayList;
  *
  */
 public class Node {
-	
+
 	private String label;
 	private ArrayList<Edge> edges;
-	
-	private int indegree;//used in tpsort
-	private boolean visited=false;//used in dijkstra's shortest path algorithm
-	private int minDistance = Integer.MAX_VALUE;//dijkstra's shortest path cost
-	private ArrayList<Node> paths = new ArrayList<Node>();//the list of all nodes on the shortest path
-	private Node path;//the immediate last node on shortest path
-	private Village data;//the village data
-	
-	public  Node getPath(){
+
+	private int indegree;// used in tpsort
+	private boolean visited = false;// used in dijkstra's shortest path
+									// algorithm
+	private int minDistance = Integer.MAX_VALUE;// dijkstra's shortest path cost
+	private ArrayList<Node> paths = new ArrayList<Node>();// the list of all
+															// nodes on the
+															// shortest path
+	private Node path;// the immediate last node on shortest path
+	private Village data;// the village data
+
+	public Node getPath() {
 		return this.path;
 	}
-	public void setPath(Node path){
-		this.path=path;
+
+	public void setPath(Node path) {
+		this.path = path;
 	}
+
 	public Node(String label) {
 		this.label = label;
 		edges = new ArrayList<Edge>();
 	}
-	
-	public boolean isVisited(){
+
+	public boolean isVisited() {
 		return this.visited;
 	}
-	
-	public void visit(){
-		this.visited=true;
-		System.out.println("set"+this.label+" visited.");
+
+	public void visit() {
+		this.visited = true;
+		System.out.println("set" + this.label + " visited.");
 	}
-	
-	public ArrayList<Node> getPaths(){
+
+	public ArrayList<Node> getPaths() {
 		return this.paths;
 	}
-	public void setMinDist(int newMin){
+
+	public void setMinDist(int newMin) {
 		this.minDistance = newMin;
 	}
-	public int getMinDist(){
+
+	public int getMinDist() {
 		return this.minDistance;
 	}
-	public int getIndegree(){
+
+	public int getIndegree() {
 		return this.indegree;
 	}
-	public void setIndegree(int newIndegree){
+
+	public void setIndegree(int newIndegree) {
 		this.indegree = newIndegree;
 	}
 
-	public String getLabel(){
+	public String getLabel() {
 		return this.label;
 	}
 
 	/**
 	 * remove the edge to destination node dest
+	 * 
 	 * @param dest
 	 */
-	public Edge removeEdge(Node dest){
+	public Edge removeEdge(Node dest) {
 		Edge temp = new Edge();
-		for(int i = 0;i<edges.size();i++){
-			if(edges.get(i).getDest()==dest){
+		for (int i = 0; i < edges.size(); i++) {
+			if (edges.get(i).getDest() == dest) {
 				temp = edges.get(i);
 				edges.remove(i);
 			}
 		}
 		return temp;
 	}
-	public boolean contains( Node dest ) {
-		for ( Edge e : edges ) {
-			if ( e.getDest() == dest )
+
+	public boolean contains(Node dest) {
+		for (Edge e : edges) {
+			if (e.getDest() == dest)
 				return true;
 		}
 		return false;
 	}
-	public ArrayList<Edge> getEdges(){
+
+	public ArrayList<Edge> getEdges() {
 		return this.edges;
 	}
-	
-	public Village getData(){
+
+	public Village getData() {
 		return this.data;
 	}
-	public String toString(){
+
+	public String toString() {
 		return this.label;
 	}
-	public void reset(){
-		this.visited=false;
-	    this.minDistance=Integer.MAX_VALUE;
-	    this.path=null;
-	    this.paths=new ArrayList<Node>();
+
+	public void reset() {
+		this.visited = false;
+		this.minDistance = Integer.MAX_VALUE;
+		this.path = null;
+		this.paths = new ArrayList<Node>();
 	}
-    public void setVillage(Village data)
-    { this.data=data;
-    	
-    }
+
+	public void setVillage(Village data) {
+		this.data = data;
+
+	}
 }
