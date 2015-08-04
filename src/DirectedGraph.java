@@ -12,27 +12,32 @@ import java.io.PrintWriter;
 
 /**
  * Directed Graph
+ * This graph implements:
+ * 
+ * 1.Prim's algorithm to find minimum spanning tree(directed graph is regarded as undirected)
+ * 2.Dijkstra's Algorithm to find shortest path
+ * 3.Topological sort
  *
  * 
  * @author rebeccahong
  *
  */
 public class DirectedGraph {
-
+	
 	private static final String NEWLINE = System.getProperty("line.separator");
 	private ArrayList<Node> nodes = new ArrayList<Node>();// nodes list
 	private Map<String, Node> lookup = new HashMap<String, Node>();
 	private boolean iscycle = false;
 
 	/**
-	 * 
+	 * Minimum Spanning Tree by Prim's Algrithm
+	 * this graph is regarded as undirected
 	 * @param startLabel
 	 */
 	public void MST(String startLabel) {
 		reset();
 
-		// create temp copy for backup
-		ArrayList<Node> tempNodes = new ArrayList<Node>();
+		// create a set of visited nodes
 		ArrayList<Node> visited = new ArrayList<Node>();
 		Node start = lookup.get(startLabel);
 
@@ -41,7 +46,7 @@ public class DirectedGraph {
 		for (Node n : this.nodes) {
 			System.out.println(n.getAdj().toString());
 		}
-		while (visited.size() < nodes.size()) {
+		while (visited.size() < this.nodes.size()) {
 			if (start == null) {
 				break;
 			}
@@ -49,7 +54,7 @@ public class DirectedGraph {
 			start.visit();
 			start = getMinSpan(visited);
 		}
-
+		
 		System.out.println(visited.toString());
 		for (Node n : visited) {
 			for (Edge e : n.getEdges()) {
@@ -61,7 +66,9 @@ public class DirectedGraph {
 		}
 
 	}
-
+	/**
+	 * Populate Adjacency List of each node
+	 */
 	private void populateAdj() {
 		for (Node n : this.nodes) {
 			for (Edge e : n.getEdges()) {
@@ -70,26 +77,39 @@ public class DirectedGraph {
 			}
 		}
 	}
-	
+	/**
+	 * assistant method in MST
+	 * @param src
+	 * @return the next Node in algorithm
+	 */
 	private Node getMinSpan(ArrayList<Node> src) {
 		int min = Integer.MAX_VALUE;
 		Node dest = null;
 		Edge temp = new Edge();
 		for (Node n : src) {
+			//for every edges coming out of n
 			for (Edge e : n.getEdges()) {
-				// if the destination node is less than minimum and is not
-				// visited(if visited generates a circle)
+				//Prim's Algorithm:
+				// Only if the destination node is less than minimum and is not
+				// visited(if visited generates a circle), take this edge into consideration
 				if (e.getCost() < min && !e.getDest().isVisited()) {
 					min = e.getCost();
 					dest = e.getDest();
 					temp = e;
 				}
 			}
+			//for every m that is adjacent to n, check the m's edge that is toward n
+			//(for treating it as undirected graph's sake)
 			for (Node m : n.getAdj()) {
+				//if m is not visited then consider the edge
 				if (!m.isVisited()) {
+					//every edges of m
 					for (Edge e : m.getEdges()) {
+						//see if there is an edge to n
 						if (e.getDest() == n) {
+							//if the cost is less than min
 							if (e.getCost() < min) {
+								//update local min
 								dest = m;
 								min = e.getCost();
 								temp = e;
@@ -99,6 +119,7 @@ public class DirectedGraph {
 				}
 			}
 		}
+		//turn on this edge's switch
 		temp.addToMST();
 		return dest;
 	}
@@ -484,10 +505,9 @@ public class DirectedGraph {
 			System.out.println("No such file.");
 			return;
 		}
-
-		// g.tpSortBFS();
 		System.out.println(g);
-		// g.shortestPath("4", "1");
+		g.tpSortBFS();
+		g.shortestPath("4", "1");
 		g.MST("1");
 		g.displayDotFile("g.dot");
 	}
