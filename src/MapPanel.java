@@ -104,10 +104,8 @@ public class MapPanel extends JPanel implements ActionListener{
  			System.out.println("No such file.");
  			return;
  		}
- 		g.tpSortBFS();
- 		System.out.println(g);
-
-        villages=g.getNodes(); 	 
+ 	
+       villages=g.getNodes(); 	 
  	   int j=1,k=1;
  	   int size=1200/villages.size();
  	    for (Node village:villages){
@@ -456,6 +454,7 @@ public void addButtonPanel(JPanel ButtonPanel) throws IOException{
 	     TopoSort.addActionListener(new ActionListener(){
 	            @Override
 	            public void actionPerformed(ActionEvent e) {
+	            	
 	         	    g.tpSortBFS();
 	         	    
 	         	    ArrayList<Node> ha= g.getNodes();

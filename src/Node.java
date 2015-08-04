@@ -8,14 +8,16 @@ import java.util.ArrayList;
  *
  */
 public class Node {
+	
 	private String label;
 	private ArrayList<Edge> edges;
-	private int indegree;
-	private boolean visited=false;
-	private int minDistance = Integer.MAX_VALUE;
-	private ArrayList<Node> paths = new ArrayList<Node>();
-	private Node path;
-	private Village data;
+	
+	private int indegree;//used in tpsort
+	private boolean visited=false;//used in dijkstra's shortest path algorithm
+	private int minDistance = Integer.MAX_VALUE;//dijkstra's shortest path cost
+	private ArrayList<Node> paths = new ArrayList<Node>();//the list of all nodes on the shortest path
+	private Node path;//the immediate last node on shortest path
+	private Village data;//the village data
 	
 	public  Node getPath(){
 		return this.path;

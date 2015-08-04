@@ -138,7 +138,7 @@ public class DirectedGraph {
 		while (!nodes.isEmpty()) {
 			Node tempNode = findNode();
 			if (tempNode == null) {
-				System.out.println("Error: Found a cycle.");
+				System.out.println("Error: Found a cycle.Topological sort is interrupted.");
 				nodes = temp;
 				this.iscycle=true;
 				updateIndegree();
@@ -241,7 +241,7 @@ public class DirectedGraph {
 	 * update the indegree of node on the graph after some calculations performed in tpsort method
 	 */
 	private void updateIndegree() {
-		this.iscycle=false;
+		
 		for (Node n : nodes) {
 			n.setIndegree(0);
 		}
@@ -254,6 +254,7 @@ public class DirectedGraph {
 		}
 	}
 	public void reset(){
+		this.iscycle=false;
 		for(Node n:nodes){
 			n.reset();
 		}
@@ -290,37 +291,35 @@ public class DirectedGraph {
 		out.close();
 	}	
 	
-	public static void main(String[] args){
-	   DirectedGraph g = new DirectedGraph();
- 		System.out.println("Enter the name of input file:");
- 		Scanner sc = new Scanner(System.in);
- 		String fileName = sc.nextLine();
- 		sc.close();
- 		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-
- 			String sCurrentLine;
-
- 			while ((sCurrentLine = br.readLine()) != null) {
- 				String[] str = sCurrentLine.split(" ");
- 				g.addEdge(str[0], str[1], Integer.parseInt(str[2]));
- 			}
-
- 		} catch (IOException e) {
- 			System.out.println("No such file.");
- 			return;
- 		}
- 		g.tpSortBFS();
- 		System.out.println(g);
- 		g.shortestPath("1", "8");
- 		System.out.println(g);
- 		
-	}
 	public boolean isIscycle() {
 		return iscycle;
 	}
 	public void setIscycle(boolean iscycle) {
 		this.iscycle = iscycle;
 	}
+	/**
+	 * test client code for directed graph
+	 * @param args
+	 */
+	public static void main(String[] args){
+		   DirectedGraph g = new DirectedGraph();
+		   
+	 		try (BufferedReader br = new BufferedReader(new FileReader("graph"))) {
 
-	
+	 			String sCurrentLine;
+
+	 			while ((sCurrentLine = br.readLine()) != null) {
+	 				String[] str = sCurrentLine.split(" ");
+	 				g.addEdge(str[0], str[1], Integer.parseInt(str[2]));
+	 			}
+
+	 		} catch (IOException e) {
+	 			System.out.println("No such file.");
+	 			return;
+	 		}
+	 		g.tpSortBFS();
+	 		System.out.println(g);
+	 		g.shortestPath("1", "8");
+	 		
+		}
 }
