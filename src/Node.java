@@ -1,4 +1,3 @@
-
 import java.util.ArrayList;
 
 /**
@@ -11,6 +10,8 @@ public class Node {
 	private String label;
 	private ArrayList<Edge> edges;
 
+	private ArrayList<Node> adj = new ArrayList<Node>();// for MST, change to
+														// undirected graph
 	private int indegree;// used in tpsort
 	private boolean visited = false;// used in dijkstra's shortest path
 									// algorithm
@@ -20,14 +21,6 @@ public class Node {
 															// shortest path
 	private Node path;// the immediate last node on shortest path
 	private Village data;// the village data
-
-	public Node getPath() {
-		return this.path;
-	}
-
-	public void setPath(Node path) {
-		this.path = path;
-	}
 
 	public Node(String label) {
 		this.label = label;
@@ -108,10 +101,27 @@ public class Node {
 		this.minDistance = Integer.MAX_VALUE;
 		this.path = null;
 		this.paths = new ArrayList<Node>();
+		this.adj = new ArrayList<Node>();
 	}
 
 	public void setVillage(Village data) {
 		this.data = data;
 
+	}
+
+	public Node getPath() {
+		return this.path;
+	}
+
+	public void setPath(Node path) {
+		this.path = path;
+	}
+
+	public ArrayList<Node> getAdj() {
+		return this.adj;
+	}
+
+	public void setAdj(ArrayList<Node> newadj) {
+		this.adj = newadj;
 	}
 }

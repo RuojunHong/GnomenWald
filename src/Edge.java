@@ -45,6 +45,10 @@ public class Edge {
 		this.belongsToMST = true;
 	}
 
+	public boolean belongsToMST() {
+		return this.belongsToMST;
+	}
+
 	public void reset() {
 		this.belongsToMST = false;
 	}

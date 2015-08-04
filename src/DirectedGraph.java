@@ -25,6 +25,85 @@ public class DirectedGraph {
 	private boolean iscycle = false;
 
 	/**
+	 * 
+	 * @param startLabel
+	 */
+	public void MST(String startLabel) {
+		reset();
+
+		// create temp copy for backup
+		ArrayList<Node> tempNodes = new ArrayList<Node>();
+		ArrayList<Node> visited = new ArrayList<Node>();
+		Node start = lookup.get(startLabel);
+
+		populateAdj();
+
+		for (Node n : this.nodes) {
+			System.out.println(n.getAdj().toString());
+		}
+		while (visited.size() < nodes.size()) {
+			if (start == null) {
+				break;
+			}
+			visited.add(start);
+			start.visit();
+			start = getMinSpan(visited);
+		}
+
+		System.out.println(visited.toString());
+		for (Node n : visited) {
+			for (Edge e : n.getEdges()) {
+				if (e.belongsToMST()) {
+					System.out.println(n.getLabel() + " "
+							+ e.getDest().getLabel());
+				}
+			}
+		}
+
+	}
+
+	private void populateAdj() {
+		for (Node n : this.nodes) {
+			for (Edge e : n.getEdges()) {
+				n.getAdj().add(e.getDest());
+				e.getDest().getAdj().add(n);
+			}
+		}
+	}
+	
+	private Node getMinSpan(ArrayList<Node> src) {
+		int min = Integer.MAX_VALUE;
+		Node dest = null;
+		Edge temp = new Edge();
+		for (Node n : src) {
+			for (Edge e : n.getEdges()) {
+				// if the destination node is less than minimum and is not
+				// visited(if visited generates a circle)
+				if (e.getCost() < min && !e.getDest().isVisited()) {
+					min = e.getCost();
+					dest = e.getDest();
+					temp = e;
+				}
+			}
+			for (Node m : n.getAdj()) {
+				if (!m.isVisited()) {
+					for (Edge e : m.getEdges()) {
+						if (e.getDest() == n) {
+							if (e.getCost() < min) {
+								dest = m;
+								min = e.getCost();
+								temp = e;
+							}
+						}
+					}
+				}
+			}
+		}
+		temp.addToMST();
+		return dest;
+	}
+
+	/**
 	 * Shortest Path- Dijkstra's Algorithm implementation
 	 * 
 	 * @param startLabel
@@ -36,6 +115,7 @@ public class DirectedGraph {
 		reset();
 		Node start = lookup.get(startLabel);
 		Node dest = lookup.get(destLabel);
+		// create copy of nodes for back up
 		ArrayList<Node> tempNodes = new ArrayList<Node>();
 		ArrayList<Node> visited = new ArrayList<Node>();
 
@@ -57,6 +137,8 @@ public class DirectedGraph {
 		}
 		// print result to console
 		System.out.println("Village\tCost\tVisited\tPath\tPathes list");
+
+		// populate paths property in node class for GUI use
 		for (Node n : tempNodes) {
 			if (n.isVisited()) {
 				updatePath(start, n, n.getPaths());
@@ -73,6 +155,8 @@ public class DirectedGraph {
 					+ nodes.get(i).isVisited() + "\t" + nodes.get(i).getPath()
 					+ "\t" + nodes.get(i).getPaths().toString());
 		}
+
+		// get the destination node's paths list
 		ArrayList<Node> paths = new ArrayList<Node>();
 		for (Node n : tempNodes) {
 			if (n == dest) {
@@ -87,7 +171,9 @@ public class DirectedGraph {
 	 * Display
 	 * 
 	 * @param start
+	 *            -the start node
 	 * @param target
+	 *            -target node
 	 * @param paths
 	 */
 	private void updatePath(Node start, Node target, ArrayList<Node> paths) {
@@ -102,23 +188,34 @@ public class DirectedGraph {
 	}
 
 	/**
-	 * Assistance method in Dijkstra's algorithm
+	 * Assistant method in Dijkstra's algorithm
 	 * 
 	 * @param src
-	 * @return
+	 *            - the visited nodes list
+	 * @return the unvisited node that has the minimum accumulated cost from any
+	 *         visited node in visited nodes list
 	 */
 	private Node getMinDest(ArrayList<Node> src) {
 		int min = Integer.MAX_VALUE;
 		Node minNode = null;
+		// for every visited node
 		for (Node n : src) {
+			// for every edge in this node's outgoing edges list
 			second: for (Edge e : n.getEdges()) {
+				// if the edge's destination is a visited node, ignore this edge
 				if (e.getDest().isVisited()) {
 					continue second;
 				} else {
+					// if this edge's destination node's new minimum cost is
+					// less than existing minimum cost
 					if (e.getDest().getMinDist() > n.getMinDist() + e.getCost()) {
+						// update the minimum cost
 						e.getDest().setMinDist(n.getMinDist() + e.getCost());
+						// set the immediate path node to be this edge's source
+						// node
 						e.getDest().setPath(n);
 					}
+					// update local minimum cost-by Dijkstra's Algorithm
 					if (e.getDest().getMinDist() < min) {
 						min = e.getDest().getMinDist();
 						minNode = e.getDest();
@@ -133,7 +230,7 @@ public class DirectedGraph {
 	 * Topological sort Breadth-first-search
 	 */
 	public void tpSortBFS() {
-		updateIndegree();
+		reset();
 		ArrayList<Node> temp = new ArrayList<Node>();
 		ArrayList<Node> sorted = new ArrayList<Node>();
 
@@ -292,10 +389,16 @@ public class DirectedGraph {
 		}
 	}
 
+	/**
+	 * reset all the help properties in MST/TPsort/Shortest path methods
+	 */
 	public void reset() {
 		this.iscycle = false;
 		for (Node n : nodes) {
 			n.reset();
+			for (Edge e : n.getEdges()) {
+				e.reset();
+			}
 		}
 	}
 
@@ -331,6 +434,22 @@ public class DirectedGraph {
 		out.close();
 	}
 
+	public void displayDotFile(String fileName) throws FileNotFoundException {
+		PrintWriter out = new PrintWriter(fileName);
+		out.println("digraph G {");
+		for (Node n : nodes) {
+			for (Edge e : n.getEdges()) {
+
+				out.println(n.getLabel() + "->" + e.getDest().getLabel()
+						+ "[label=\"" + e.getCost() + "\"];");
+
+			}
+		}
+		out.println("}");
+		out.close();
+
+	}
+
 	public boolean isIscycle() {
 		return iscycle;
 	}
@@ -339,12 +458,17 @@ public class DirectedGraph {
 		this.iscycle = iscycle;
 	}
 
+	public Map<String, Node> getLookUp() {
+		return this.lookup;
+	}
+
 	/**
 	 * test client code for directed graph
 	 * 
 	 * @param args
+	 * @throws FileNotFoundException
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		DirectedGraph g = new DirectedGraph();
 
 		try (BufferedReader br = new BufferedReader(new FileReader("graph"))) {
@@ -360,9 +484,11 @@ public class DirectedGraph {
 			System.out.println("No such file.");
 			return;
 		}
-		g.tpSortBFS();
-		System.out.println(g);
-		g.shortestPath("1", "8");
 
+		// g.tpSortBFS();
+		System.out.println(g);
+		// g.shortestPath("4", "1");
+		g.MST("1");
+		g.displayDotFile("g.dot");
 	}
 }
