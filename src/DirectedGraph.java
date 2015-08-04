@@ -18,8 +18,9 @@ import java.io.PrintWriter;
  *
  */
 public class DirectedGraph {
+	
 	private static final String NEWLINE = System.getProperty("line.separator");
-	private ArrayList<Node> nodes = new ArrayList<Node>();
+	private ArrayList<Node> nodes = new ArrayList<Node>();//nodes list
 	private Map<String, Node> lookup = new HashMap<String, Node>();
 	private boolean iscycle = false;
 	
