@@ -455,22 +455,6 @@ public class DirectedGraph {
 		out.close();
 	}
 
-	public void displayDotFile(String fileName) throws FileNotFoundException {
-		PrintWriter out = new PrintWriter(fileName);
-		out.println("digraph G {");
-		for (Node n : nodes) {
-			for (Edge e : n.getEdges()) {
-
-				out.println(n.getLabel() + "->" + e.getDest().getLabel()
-						+ "[label=\"" + e.getCost() + "\"];");
-
-			}
-		}
-		out.println("}");
-		out.close();
-
-	}
-
 	public boolean isIscycle() {
 		return iscycle;
 	}
@@ -484,7 +468,7 @@ public class DirectedGraph {
 	}
 
 	/**
-	 * test client code for directed graph
+	 * test client code for directed graph abstract data structure
 	 * 
 	 * @param args
 	 * @throws FileNotFoundException
@@ -509,6 +493,5 @@ public class DirectedGraph {
 		g.tpSortBFS();
 		g.shortestPath("4", "1");
 		g.MST("1");
-		g.displayDotFile("g.dot");
 	}
 }
