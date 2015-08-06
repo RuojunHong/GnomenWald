@@ -1089,7 +1089,7 @@ private class Gnome implements Runnable
     		setPeople_on_road(true);
     		double   cosValue= depart.getPosition().cos(destination.get(i).getData().getPosition(),this.getLocation());
             double   sinValue= depart.getPosition().sin(destination.get(i).getData().getPosition(),this.getLocation());
-    		findRoad(depart,destination.get(i).getData()).setCapacity(findRoad(depart,destination.get(i).getData()).getCapacity()-1);
+    		//findRoad(depart,destination.get(i).getData()).setCapacity(findRoad(depart,destination.get(i).getData()).getCapacity()-1);
             Road traffic= findRoad(depart,destination.get(i).getData());
     		while(destination.get(i).getData().getCapacity()<=0&&traffic.isFull()){
     			try {
@@ -1114,7 +1114,7 @@ private class Gnome implements Runnable
     			 
     			display.repaint();
     		}
-    		traffic.setCapacity(traffic.getCapacity()+1);
+    		//traffic.setCapacity(traffic.getCapacity()+1);
     		destination.get(i).getData().setCapacity(destination.get(i).getData().getCapacity()-1);
     		this.setOrigin(destination.get(i).getData());
     		
